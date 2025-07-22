@@ -1,11 +1,24 @@
 # product_3
 
 A new Flutter project.
-  
-![App Screenshot](assets/addproduct.jpg)
-![App Screenshot](assets/home.jpg)
-![App Screenshot](assets/details.jpg)
-![App Screenshot](assets/search.jpg)
+
+
+## Home page
+
+<img src="assets/home.jpg" alt="App Screenshot" width="300"/>
+
+## Details page
+
+<img src="assets/details.jpg" alt="App Screenshot" width="300"/>
+
+## Add Product page
+
+<img src="assets/addproduct.jpg" alt="App Screenshot" width="300"/>
+
+## Search page
+
+<img src="assets/search.jpg" alt="App Screenshot" width="300" />
+
 
 
 ## Getting Started
