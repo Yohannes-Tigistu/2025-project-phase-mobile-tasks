@@ -17,7 +17,7 @@ A new Flutter project.
 
 ## Search page
 
-<img src="assets/search.jpg" alt="App Screenshot" width="300" />
+<img src="assets/Search.jpg" alt="App Screenshot" width="300" />
 
 
 
