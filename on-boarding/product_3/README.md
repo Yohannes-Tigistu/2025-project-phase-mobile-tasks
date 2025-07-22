@@ -1,6 +1,12 @@
 # product_3
 
 A new Flutter project.
+  
+![App Screenshot](assets/addproduct.jpg)
+![App Screenshot](assets/home.jpg)
+![App Screenshot](assets/details.jpg)
+![App Screenshot](assets/search.jpg)
+
 
 ## Getting Started
 
