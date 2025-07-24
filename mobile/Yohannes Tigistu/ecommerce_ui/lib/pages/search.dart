@@ -42,14 +42,6 @@ class _SearchState extends State<Search> {
                 Expanded(
                   child: TextField(
                     decoration: InputDecoration(
-                      hint: Text(
-                        "Leather",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey,
-                        ),
-                      ),
                       contentPadding: EdgeInsets.symmetric(
                         vertical: 0,
                         horizontal: 20,
@@ -95,7 +87,10 @@ class _SearchState extends State<Search> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Category"),
+                  Text(
+                    "Category",
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
                   SizedBox(height: 10),
                   TextField(
                     decoration: InputDecoration(
@@ -115,11 +110,10 @@ class _SearchState extends State<Search> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  Text("price"),
+
+                  Text("price", style: Theme.of(context).textTheme.labelLarge),
                   SizedBox(height: 10),
                   RangeSlider(
-                  
-                    
                     activeColor: Color(0xFF3F51F3),
                     inactiveColor: Colors.black12,
                     values: _currentRange,

@@ -2,7 +2,8 @@
 
 A new Flutter project.
 
-
+The app now supports adding of products , and navigation across different pages .
+In addition the app supports navigation animation . stay tuned for further updates.
 ## Home page
 
 <img src="assets/home.jpg" alt="App Screenshot" width="300"/>
