@@ -1,6 +1,8 @@
 # ecommerce_app
 
 A new Flutter project.
+# task 8 set up linter rules
+    This project has be set with specific linter rules to help in development .
 
 ## Getting Started
 
