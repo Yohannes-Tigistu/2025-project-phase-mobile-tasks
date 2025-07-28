@@ -1,7 +1,7 @@
 # ecommerce_app
 
 A new Flutter project.
-# task 9 set up linter rules
+# task Domain layer refactoring 
     completed domain layer refactoring :
 
         create_new_product_usecase: for creating new products 
