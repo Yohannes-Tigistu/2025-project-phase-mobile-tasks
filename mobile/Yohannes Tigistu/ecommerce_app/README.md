@@ -1,8 +1,18 @@
 # ecommerce_app
 
 A new Flutter project.
-# task 8 set up linter rules
-    This project has be set with specific linter rules to help in development .
+# task 9 set up linter rules
+    completed domain layer refactoring :
+
+        create_new_product_usecase: for creating new products 
+        delete_product_usecase: for deleting products
+        update_product_usecase: for updating products
+        view_all_products_usecase: for viewing a list of all products
+        view_specific_product_usecase: for viewing a prodcut with a specific id
+
+
+
+        
 
 ## Getting Started
 
