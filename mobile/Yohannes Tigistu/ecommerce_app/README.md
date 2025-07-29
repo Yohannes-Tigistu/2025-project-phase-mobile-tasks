@@ -28,29 +28,6 @@ This project uses a clean architecture approach, separating the codebase into Pr
 
 For a detailed explanation, see `ARCHITECTURE.md` in the project root.
 
-## How to Update Documentation
-
-1. Edit the `README.md` or `ARCHITECTURE.md` file in the root directory
-2. Add or update sections as needed
-3. Commit and push your changes to GitHub:
-
-    ```sh
-    git add README.md ARCHITECTURE.md
-    git commit -m "Update architecture and data flow documentation"
-    git push
-    ```
-
----
-
-# task Domain layer refactoring 
-    completed domain layer refactoring :
-
-        create_new_product_usecase: for creating new products 
-        delete_product_usecase: for deleting products
-        update_product_usecase: for updating products
-        view_all_products_usecase: for viewing a list of all products
-        view_specific_product_usecase: for viewing a prodcut with a specific id
-
 ## Getting Started
 
 This project is a starting point for a Flutter application.
