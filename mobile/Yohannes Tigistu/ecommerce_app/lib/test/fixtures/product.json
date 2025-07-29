@@ -1,0 +1,8 @@
+{
+    "id": 1 ,
+    "imageUrl":"https://example.com/image.jpg",
+    "name": "Sample Product",
+    "description": "This is a sample product description.",
+    "category": "Electronics",
+    "price": 29.99 
+}

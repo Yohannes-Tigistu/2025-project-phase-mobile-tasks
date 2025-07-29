@@ -1,6 +1,47 @@
 # ecommerce_app
 
 A new Flutter project.
+
+## Architecture Overview
+
+This project uses a clean architecture approach, separating the codebase into Presentation, Domain, and Data layers for maintainability and testability.
+
+- **Presentation Layer**: UI and user interaction
+- **Domain Layer**: Business logic, use cases, repository interfaces
+- **Data Layer**: Data sources (API/local), repository implementations
+
+### Example Use Cases
+
+- `create_new_product_usecase`: Create new products
+- `delete_product_usecase`: Delete products
+- `update_product_usecase`: Update products
+- `view_all_products_usecase`: View all products
+- `view_specific_product_usecase`: View a product by ID
+
+## Data Flow
+
+1. UI triggers a use case (e.g., fetch products)
+2. Use case calls the repository interface
+3. Repository implementation fetches/updates data from API or local storage
+4. Data is mapped to entities and returned up to the UI
+5. UI updates based on the result
+
+For a detailed explanation, see `ARCHITECTURE.md` in the project root.
+
+## How to Update Documentation
+
+1. Edit the `README.md` or `ARCHITECTURE.md` file in the root directory
+2. Add or update sections as needed
+3. Commit and push your changes to GitHub:
+
+    ```sh
+    git add README.md ARCHITECTURE.md
+    git commit -m "Update architecture and data flow documentation"
+    git push
+    ```
+
+---
+
 # task Domain layer refactoring 
     completed domain layer refactoring :
 
@@ -9,10 +50,6 @@ A new Flutter project.
         update_product_usecase: for updating products
         view_all_products_usecase: for viewing a list of all products
         view_specific_product_usecase: for viewing a prodcut with a specific id
-
-
-
-        
 
 ## Getting Started
 
