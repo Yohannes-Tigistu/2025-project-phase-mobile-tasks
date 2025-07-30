@@ -14,5 +14,9 @@ class Failures {
   } 
    class CacheFailure extends Failures{
   CacheFailure(super.message);
-
   } 
+
+  class NetworkFailure extends Failures{
+  NetworkFailure(super.message);
+  
+  }

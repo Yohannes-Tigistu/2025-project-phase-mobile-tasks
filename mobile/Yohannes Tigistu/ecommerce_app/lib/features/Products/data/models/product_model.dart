@@ -16,6 +16,17 @@ class ProductModel extends Product {
          price: price,
          imageUrl: imageUrl,
        );
+  // Method to create productmodel from product entity
+  factory ProductModel.fromEntity(Product product) {
+    return ProductModel(
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      category: product.category,
+      price: product.price,
+      imageUrl: product.imageUrl,
+    );
+  }
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
