@@ -8,3 +8,11 @@ class Failures {
     return 'Failures: $message';
   }
 }
+  class ServerFailure extends Failures{
+  ServerFailure(super.message);
+
+  } 
+   class CacheFailure extends Failures{
+  CacheFailure(super.message);
+
+  } 

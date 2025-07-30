@@ -5,8 +5,8 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../features/Products/data/models/product_model.dart';
-import '../../fixtures/fixture_reader.dart';
+import '../../../../../features/Products/data/models/product_model.dart';
+import '../../../../fixtures/fixture_reader.dart';
 
 void main(){
   final ProductModel productModel = ProductModel(
