@@ -12,14 +12,14 @@ void main(){
   final ProductModel productModel = ProductModel(
     id: 1,
     name: 'Test Product',
-    description: 'This is a test product',
-    category: 'Test Category',
+    description: 'This is a sample product description.',
+    category: 'Electronics',
     price: 19.99,
     imageUrl: 'http://example.com/image.jpg',
   );
   group('fromJson', () {
     test('should return a valid model from JSON', () {
-      final Map<String, dynamic> jsonMap = json.decode(fixture('product_model.json'));
+      final Map<String, dynamic> jsonMap = json.decode(fixture('product.json'));
       final result = ProductModel.fromJson(jsonMap);
       expect(result, productModel);
     });

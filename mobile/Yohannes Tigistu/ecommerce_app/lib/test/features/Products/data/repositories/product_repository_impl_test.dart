@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../../../../core/errors/failures.dart';
-import '../../../../../core/platform/network_info.dart';
+import '../../../../../core/network/network_info.dart';
 import '../../../../../core/success/confirmation.dart';
 import '../../../../../features/Products/data/datasources/products_local_data_source.dart';
 import '../../../../../features/Products/data/datasources/products_remote_data_source.dart';
