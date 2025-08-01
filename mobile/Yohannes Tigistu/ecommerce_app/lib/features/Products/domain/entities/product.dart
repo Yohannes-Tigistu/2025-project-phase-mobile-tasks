@@ -23,5 +23,6 @@ class Product extends Equatable{
   // String toString() {
   //   return 'Product{id: $id, name: $name, description: $description, price: $price, imageUrl: $imageUrl}';
   // }
-  List<Object> get props => [id];     
+  @override
+  List<Object> get props => [id, name, description, category, price, imageUrl];     
 }

@@ -30,8 +30,8 @@ void main(){
       final expectedMap = {
         'id': 1,
         'name': 'Test Product',
-        'description': 'This is a test product',
-        'category': 'Test Category',
+        'description': 'This is a sample product description.',
+        'category': 'Electronics',
         'price': 19.99,
         'imageUrl': 'http://example.com/image.jpg',
       };

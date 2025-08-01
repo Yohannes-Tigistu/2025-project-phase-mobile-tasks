@@ -44,7 +44,7 @@ void main() {
 
   test('should return Failure when repository.createProduct fails', () async {
     // arrange
-    final failure = ServerFailure('server error');
+    final failure = ServerFailure();
     when(mockProductRepository.createProduct(testProduct))
         .thenAnswer((_) async => Left(failure));
     // act

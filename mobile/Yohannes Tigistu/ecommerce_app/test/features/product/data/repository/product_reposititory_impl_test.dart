@@ -58,6 +58,8 @@ void main() {
         'should return remote data when the call to remote data source is successful',
         () async {
           // Arrange
+          when(networkInfo.isConnected).thenAnswer((_) async => true);
+          
           when(
             remoteDataSource.getAllProducts(),
           ).thenAnswer((_) async => tProductsModel);
@@ -93,7 +95,7 @@ void main() {
           // Assert
           verify(remoteDataSource.getAllProducts());
           verifyZeroInteractions(localDataSource);
-          expect(result, Left(ServerFailure('Failed to fetch products')));
+          expect(result, Left(ServerFailure()));
         },
       );
     });
@@ -121,7 +123,7 @@ void main() {
         final result = await repository.getAllProducts();
         // Assert
         verify(localDataSource.getLastProducts());
-        expect(result, Left(CacheFailure('No cached products available')));
+        expect(result, Left(CacheFailure()));
       });
     });
   });
@@ -169,7 +171,7 @@ void main() {
         final result = await repository.createProduct(tProduct);
         // Assert
         verify(remoteDataSource.createProduct(tProduct));
-        expect(result, Left(ServerFailure('Failed to create product')));
+        expect(result, Left(ServerFailure()));
       });
     });
     group('when device is offline', () {
@@ -192,7 +194,7 @@ void main() {
           final result = await repository.createProduct(tProduct);
           // Assert
           verifyZeroInteractions(remoteDataSource);
-          expect(result, Left(CacheFailure('No network connection')));
+          expect(result, Left(CacheFailure()));
         },
       );
     });
@@ -234,7 +236,7 @@ void main() {
             // Assert
             verify(remoteDataSource.deleteProduct(tId));
             verifyZeroInteractions(localDataSource);
-            expect(result, Left(ServerFailure('Failed to delete product')));
+            expect(result, Left(ServerFailure()));
           },
         );
       });
@@ -251,7 +253,7 @@ void main() {
             // Assert
             verifyZeroInteractions(remoteDataSource);
             verifyZeroInteractions(localDataSource);
-            expect(result, Left(NetworkFailure('No internet connection')));
+            expect(result, Left(NetworkFailure()));
           },
         );
       });
@@ -314,7 +316,7 @@ void main() {
             // Assert
             verify(remoteDataSource.getProductById(tId));
             verifyZeroInteractions(localDataSource);
-            expect(result, Left(ServerFailure('Failed to fetch product')));
+            expect(result, Left(ServerFailure()));
           },
         );
       });
@@ -349,7 +351,7 @@ void main() {
             // Assert
             verify(localDataSource.getProductById(tId));
             verifyZeroInteractions(remoteDataSource);
-            expect(result, Left(CacheFailure('No cached product available')));
+            expect(result, Left(CacheFailure()));
           },
         );
       });
@@ -399,7 +401,7 @@ void main() {
           // Assert
           verify(remoteDataSource.updateProduct(tProductModel));
           verifyZeroInteractions(localDataSource);
-          expect(result, Left(ServerFailure('Failed to update product')));
+          expect(result, Left(ServerFailure()));
         });
       });
 
@@ -416,7 +418,7 @@ void main() {
             // Assert
             verifyZeroInteractions(remoteDataSource);
             verifyZeroInteractions(localDataSource);
-            expect(result, Left(NetworkFailure('No internet connection')));
+            expect(result, Left(NetworkFailure()));
           },
         );
       });

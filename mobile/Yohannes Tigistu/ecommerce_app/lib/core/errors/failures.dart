@@ -1,22 +1,28 @@
-class Failures {
-  final String message;
+abstract class Failures {
+  const Failures();
+  @override
+  List<Object?> get props => [];
+}
 
-  Failures(this.message);
+class ServerFailure extends Failures {
+  ServerFailure();
 
   @override
-  String toString() {
-    return 'Failures: $message';
-  }
+  List<Object?> get props => [];
 }
-  class ServerFailure extends Failures{
-  ServerFailure(super.message);
 
-  } 
-   class CacheFailure extends Failures{
-  CacheFailure(super.message);
+class CacheFailure extends Failures {
+  CacheFailure();
+
+  @override
+  List<Object?> get props => [];
   } 
 
-  class NetworkFailure extends Failures{
-  NetworkFailure(super.message);
+class NetworkFailure extends Failures {
+  NetworkFailure();
+
+  @override
+  List<Object?> get props => [];
+}
+
   
-  }
