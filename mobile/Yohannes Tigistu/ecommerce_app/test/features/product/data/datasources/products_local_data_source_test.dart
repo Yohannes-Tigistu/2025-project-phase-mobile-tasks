@@ -1,12 +1,13 @@
 
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:matcher/matcher.dart';
+
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../../core/errors/exeption.dart';
-import '../../../../../features/Products/data/datasources/products_local_data_source.dart';
-import '../../../../../features/Products/data/models/product_model.dart';
+
+import '../../../../../lib/features/Products/data/models/product_model.dart';
+import '../../../../../lib/features/Products/data/datasources/products_local_data_source.dart';
+import '../../../../../lib/core/errors/exeption.dart';
 
 class MockSharedPreferences extends Mock implements SharedPreferences{
 
@@ -37,6 +38,7 @@ void main(){
         final result = await localDataSource.getLastProducts();
 
         // Assert
+        expect(result, isA<List<ProductModel>>());
         expect(result.length, 2);
         expect(result[0].name, 'Product 1');
       });
@@ -86,7 +88,7 @@ void main(){
     test(
       'should throw CacheException when product not found',
       () {
-        
+
         // Arrange
         when(mockSharedPreferences.getString(CACHED_PRODUCTS)).thenReturn(null);
 

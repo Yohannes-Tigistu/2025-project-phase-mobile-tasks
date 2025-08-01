@@ -1,14 +1,16 @@
+
+import 'package:ecommerce_app/core/network/network_info.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:mockito/mockito.dart';
 
-import '../../../core/network/network_info.dart';
+
 class MockNetworkInfoChecker extends Mock implements InternetConnection{
 
 }
 void main(){
 
-  late NetworkInfoImpl  networkinfo ;
+  late NetworkInfo  networkinfo ;
   late MockNetworkInfoChecker mockNetworkInfoChecker;
 
   setUp(() {

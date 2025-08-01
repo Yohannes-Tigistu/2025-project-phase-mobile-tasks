@@ -2,10 +2,9 @@ import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../../../core/errors/exeption.dart';
-import '../../../../../features/Products/data/datasources/products_remote_data_source.dart';
-import '../../../../../features/Products/data/models/product_model.dart';
-
+import '../../../../../lib/core/errors/exeption.dart';
+import '../../../../../lib/features/Products/data/models/product_model.dart';
+import '../../../../../lib/features/Products/data/datasources/products_remote_data_source.dart';
 class MockHttpClient extends Mock implements http.Client {}
 
 void main() {
