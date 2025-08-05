@@ -27,7 +27,7 @@ void main() {
     imageUrl: 'http://example.com/image.png',
     category: 'Electronics'
   );
-  final params = Params(product: testProduct);
+  final params =  testProduct;
   final confirmation = Confirmation('Product created successfully');
 
   test('should call repository.createProduct and return Confirmation on success', () async {

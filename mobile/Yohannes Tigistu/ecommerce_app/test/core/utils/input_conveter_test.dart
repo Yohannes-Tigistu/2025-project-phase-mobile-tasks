@@ -10,9 +10,9 @@ void main() {
   });
   group('InputConverter', () {
     test('should be an instance of InputConverter', () {
-      final num = '123';
+      final num = '123.0';
 
-      final result = inputConverter.stringToUnsignedInteger(num);
+      final result = inputConverter.stringToUnsignedDouble(num);
 
       expect(result, Right(123));
     });
@@ -21,7 +21,7 @@ void main() {
     test('should return a Left(InvalidInputFailure) when input is invalid', () {
       final invalidNum = 'abc';
 
-      final result = inputConverter.stringToUnsignedInteger(invalidNum);
+      final result = inputConverter.stringToUnsignedDouble(invalidNum);
 
       expect(result, Left<Failures, int>(InvalidInputFailure()));
     });
@@ -30,7 +30,7 @@ void main() {
       () {
         final negativeNum = '-123';
 
-        final result = inputConverter.stringToUnsignedInteger(negativeNum);
+        final result = inputConverter.stringToUnsignedDouble(negativeNum);
 
         expect(result, Left<Failures, int>(InvalidInputFailure()));
       },

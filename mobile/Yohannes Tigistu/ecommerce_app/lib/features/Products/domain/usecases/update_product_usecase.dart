@@ -8,21 +8,12 @@ import '../../../../core/usecases/usecase.dart';
 import '../entities/product.dart';
 import '../repositories/product_repository.dart';
 
-class UpdateProductUsecase implements UseCase<Confirmation, Params>{
+class UpdateProductUsecase {
   final ProductRepository repository;
 
   UpdateProductUsecase(this.repository);
- @override
-  Future<Either<Failures, Confirmation>> call(Params params) async {
-    return await repository.updateProduct(params.product);
+  Future<Either<Failures, Confirmation>> call(Product product) async {
+    return await repository.updateProduct(product);
   }
 } 
-class Params extends Equatable {
-  final Product product;
-
-  Params({required this.product});
-
-  @override
-  List<Object?> get props => [product];
-}
 

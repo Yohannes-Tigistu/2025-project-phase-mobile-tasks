@@ -7,21 +7,11 @@ import '../entities/product.dart';
 import '../repositories/product_repository.dart';
 
 
-class ViewSpecificProductUsecase implements UseCase <Product , Params> {
+class ViewSpecificProductUsecase   {
   final ProductRepository repository;
 
   ViewSpecificProductUsecase(this.repository);
-  @override
-  Future<Either<Failures, Product>> call(Params params ) async{
-    return repository.getProductById(params.id);
+  Future<Either<Failures, Product>> call(int id) async {
+    return repository.getProductById(id);
   }
-}
-class Params extends Equatable{
- final int id;
-
- const Params({required this.id});
-
- @override
- List<Object> get props => [id];
-
 }

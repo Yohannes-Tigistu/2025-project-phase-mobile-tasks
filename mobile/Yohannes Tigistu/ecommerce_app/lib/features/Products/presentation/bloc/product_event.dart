@@ -6,10 +6,10 @@ sealed class ProductEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
-class AddProductEvent extends ProductEvent {
+class CreateProductEvent extends ProductEvent {
   final Product product;
 
-  const AddProductEvent({required this.product});
+  const CreateProductEvent({required this.product});
 
   @override
   List<Object> get props => [product];
@@ -30,16 +30,14 @@ class DeleteProductEvent extends ProductEvent {
   @override
   List<Object> get props => [productId];
 }
-class GetAllProductsEvent extends ProductEvent {
-  const GetAllProductsEvent();
+class LoadAllProductsEvent extends ProductEvent {
 
-  @override
-  List<Object> get props => [];
 }
-class GetProductByIdEvent extends ProductEvent {
+
+class GetSingleProductEvent extends ProductEvent {
   final int productId;
 
-  const GetProductByIdEvent({required this.productId});
+  const GetSingleProductEvent({required this.productId});
 
   @override
   List<Object> get props => [productId];

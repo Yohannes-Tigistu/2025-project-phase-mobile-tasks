@@ -7,25 +7,12 @@ import '../../../../core/usecases/usecase.dart';
 import '../repositories/product_repository.dart';
 
 
-class DeleteProductUsecase implements UseCase<Confirmation, Params> {  
+class DeleteProductUsecase {
   final ProductRepository repository;
 
   DeleteProductUsecase(this.repository);
 
-  @override
-  Future<Either<Failures, Confirmation>> call(Params params) async {
-    return await repository.deleteProduct(params.id);
-  } 
-}
-class Params extends Equatable{
-  final int id;
-
-  const Params({required this.id});
-  
-  @override
-
-  List<Object?> get props => [id];
-  
-
-
+  Future<Either<Failures, Confirmation>> call(int id) async {
+    return await repository.deleteProduct(id);
+  }
 }

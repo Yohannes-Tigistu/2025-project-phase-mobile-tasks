@@ -6,11 +6,11 @@ class InputConverter {
   /// Converts a string to an integer.
   /// Returns a [Right] with the integer if conversion is successful,
   /// or a [Left] with a [FormatFailure] if conversion fails.
-  Either<Failures, int> stringToUnsignedInteger(String str) {
+  Either<Failures, double> stringToUnsignedDouble(String str) {
     try {
-      final intValue = int.parse(str);
-      if (intValue < 0) throw FormatException();
-      return Right(intValue);
+      final doubleValue = double.parse(str);
+      if (doubleValue < 0) throw const FormatException();
+      return Right(doubleValue);
     } on FormatException {
       return Left(InvalidInputFailure());
     }
