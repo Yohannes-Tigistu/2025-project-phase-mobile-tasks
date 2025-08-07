@@ -7,9 +7,12 @@ import 'package:ecommerce_app/features/Products/domain/usecases/create_new_produ
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'create_new_product_usecase_test.mocks.dart';
 
-class MockProductRepository extends Mock implements ProductRepository {}
+const serverFailureMessage = 'Server Failure';
 
+
+@GenerateMocks([ProductRepository])
 void main() {
   late CreateNewProductUsecase usecase;
   late MockProductRepository mockProductRepository;
@@ -44,7 +47,7 @@ void main() {
 
   test('should return Failure when repository.createProduct fails', () async {
     // arrange
-    final failure = ServerFailure();
+    final failure = ServerFailure(serverFailureMessage);
     when(mockProductRepository.createProduct(testProduct))
         .thenAnswer((_) async => Left(failure));
     // act

@@ -18,6 +18,7 @@ class InputConverter {
 }
 
 class InvalidInputFailure extends Failures {
+  const InvalidInputFailure() : super('Invalid input');
   @override
   bool operator ==(Object other) =>
       identical(this, other) || other is InvalidInputFailure;

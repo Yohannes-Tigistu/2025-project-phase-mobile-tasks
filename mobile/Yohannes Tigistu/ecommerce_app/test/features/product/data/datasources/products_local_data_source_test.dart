@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,9 +10,10 @@ import '../../../../../lib/features/Products/data/models/product_model.dart';
 import '../../../../../lib/features/Products/data/datasources/products_local_data_source.dart';
 import '../../../../../lib/core/errors/exeption.dart';
 
-class MockSharedPreferences extends Mock implements SharedPreferences{
 
-}
+import 'products_local_data_source_test.mocks.dart';
+
+@GenerateMocks( [SharedPreferences])
 const CACHED_PRODUCTS = 'cached_products';
 void main(){
   // Mocking the ProductsLocalDataSource
@@ -32,7 +34,6 @@ void main(){
         ];
         final jsonString = jsonEncode(productList.map((product) => ProductModel.fromJson(product).toJson()).toList());
         when(mockSharedPreferences.getString(CACHED_PRODUCTS)).thenReturn(jsonString);
-        when(mockSharedPreferences.getString(CACHED_PRODUCTS)).thenReturn(jsonString.toString());
 
         // Act
         final result = await localDataSource.getLastProducts();
@@ -52,23 +53,22 @@ void main(){
     // Additional tests for other methods can be added here
   test(
     'should cache products',
-    () async {
-      // Arrange
-      final List<ProductModel> products = [
+      () async {
+        // Arrange
+        final List<ProductModel> products = [
         ProductModel(id: 1, name: 'Product 1', description: 'Description 1', category: 'Category 1', price: 10.0, imageUrl: 'http://example.com/image1.jpg'),
         ProductModel(id: 2, name: 'Product 2', description: 'Description 2', category: 'Category 2', price: 20.0, imageUrl: 'http://example.com/image2.jpg'),
-      ];
-      final jsonString = jsonEncode(products.map((product) => product.toJson()).toList());
-      when(mockSharedPreferences.setString( CACHED_PRODUCTS, jsonString)).thenAnswer((_) async => true);
+        ];
+        final jsonString = jsonEncode(products.map((product) => product.toJson()).toList());
+        when(mockSharedPreferences.setString(CACHED_PRODUCTS, jsonString)).thenAnswer((_) async => Future.value(true));
+        // Act
+        await localDataSource.cacheProducts(products);
 
-      // Act
-      await localDataSource.cacheProducts(products);
+        // Assert
+        verify(mockSharedPreferences.setString(CACHED_PRODUCTS, jsonString)).called(1);
 
-      // Assert
-      verify(mockSharedPreferences.setString( CACHED_PRODUCTS, jsonString)).called(1);
-
-    
-    });
+      
+      });
 
     test(
       'should return a product by id',
@@ -126,7 +126,7 @@ void main(){
         // Act
         await localDataSource.deleteProduct(1);
 
-        // Assert
+        // Assert 
         verify(mockSharedPreferences.setString(CACHED_PRODUCTS, jsonString)).called(1);
       },
     );

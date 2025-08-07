@@ -32,7 +32,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final UpdateProductUsecase updateProductUsecase;
   final DeleteProductUsecase deleteProductUsecase;
   final ViewSpecificProductUsecase getProductByIdUsecase;
-  final InputConverter inputConverter ;
+  final InputConverter inputConverter ;     
   
   ProductBloc({
     required this.inputConverter,
@@ -53,8 +53,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(CreateProductLoadingState());
      final result = await createNewProductUsecase.call(( event.product));
     result.fold(
-      (failure) => emit(CreateProductErrorState(message: kProductCreateError)),     
-      (confirmation) => emit(CreateProductSuccessState(message: kProductCreateSuccess)),
+      (failure) => emit(const CreateProductErrorState(message: kProductCreateError)),     
+      (confirmation) => emit(const CreateProductSuccessState(message: kProductCreateSuccess)),
     );
   }
 
@@ -62,8 +62,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     emit(UpdateProductLoadingState());
     final result = await updateProductUsecase.call((event.product));
     result.fold(
-      (failure) => emit(UpdateProductErrorState(message: kProductUpdateError)),
-      (confirmation) => emit(UpdateProductSuccessState(message: kProductUpdateSuccess)),
+      (failure) => emit(const UpdateProductErrorState(message: kProductUpdateError)),
+      (confirmation) => emit(const UpdateProductSuccessState(message: kProductUpdateSuccess)),
     );
   }
 

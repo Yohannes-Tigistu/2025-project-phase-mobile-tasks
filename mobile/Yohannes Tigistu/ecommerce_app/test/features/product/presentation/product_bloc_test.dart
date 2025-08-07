@@ -15,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
+import '../domain/usecases/create_new_product_usecase_test.dart';
 import 'product_bloc_test.mocks.dart';
 
 // Use the same constants as in the BLoC file
@@ -99,7 +100,7 @@ void main() {
       build: () {
         when(
           mockCreateNewProductUsecase(any),
-        ).thenAnswer((_) async => Left(ServerFailure()));
+        ).thenAnswer((_) async => Left(ServerFailure(serverFailureMessage)));
         return productBloc;
       },
       act: (bloc) => bloc.add(CreateProductEvent(product: tProduct)),
@@ -137,7 +138,7 @@ void main() {
       build: () {
         when(
           mockUpdateProductUsecase(any),
-        ).thenAnswer((_) async => Left(ServerFailure()));
+        ).thenAnswer((_) async => Left(ServerFailure(serverFailureMessage)));
         return productBloc;
       },
       act: (bloc) => bloc.add(UpdateProductEvent(product: tProduct)),
@@ -176,7 +177,7 @@ void main() {
       build: () {
         when(
           mockDeleteProductUsecase(any),
-        ).thenAnswer((_) async => Left(ServerFailure()));
+        ).thenAnswer((_) async => Left(ServerFailure(serverFailureMessage)));
         return productBloc;
       },
       act: (bloc) => bloc.add(DeleteProductEvent(productId: tProductId)),
@@ -215,7 +216,7 @@ void main() {
       build: () {
         when(
           mockViewAllProductsUsecase(any),
-        ).thenAnswer((_) async => Left(ServerFailure()));
+        ).thenAnswer((_) async => Left(ServerFailure(serverFailureMessage)));
         return productBloc;
       },
       act: (bloc) => bloc.add(LoadAllProductsEvent()),
@@ -254,7 +255,7 @@ void main() {
       build: () {
         when(
           mockViewSpecificProductUsecase(any),
-        ).thenAnswer((_) async => Left(ServerFailure()));
+        ).thenAnswer((_) async => Left(ServerFailure(serverFailureMessage)));
         return productBloc;
       },
       act: (bloc) => bloc.add(GetSingleProductEvent(productId: tProductId)),

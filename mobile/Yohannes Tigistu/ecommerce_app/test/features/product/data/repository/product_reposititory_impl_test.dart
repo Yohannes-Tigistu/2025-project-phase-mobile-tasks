@@ -95,7 +95,7 @@ void main() {
           // Assert
           verify(remoteDataSource.getAllProducts());
           verifyZeroInteractions(localDataSource);
-          expect(result, Left(ServerFailure()));
+          expect(result, Left(ServerFailure(serverFailureMessage)));
         },
       );
     });
@@ -123,7 +123,7 @@ void main() {
         final result = await repository.getAllProducts();
         // Assert
         verify(localDataSource.getLastProducts());
-        expect(result, Left(CacheFailure()));
+        expect(result, Left(CacheFailure(cacheFailureMessage)));
       });
     });
   });
@@ -171,7 +171,7 @@ void main() {
         final result = await repository.createProduct(tProduct);
         // Assert
         verify(remoteDataSource.createProduct(tProduct));
-        expect(result, Left(ServerFailure()));
+        expect(result, Left(ServerFailure(serverFailureMessage)));
       });
     });
     group('when device is offline', () {
@@ -194,7 +194,7 @@ void main() {
           final result = await repository.createProduct(tProduct);
           // Assert
           verifyZeroInteractions(remoteDataSource);
-          expect(result, Left(CacheFailure()));
+          expect(result, Left(CacheFailure(cacheFailureMessage)));
         },
       );
     });
@@ -236,7 +236,7 @@ void main() {
             // Assert
             verify(remoteDataSource.deleteProduct(tId));
             verifyZeroInteractions(localDataSource);
-            expect(result, Left(ServerFailure()));
+            expect(result, Left(ServerFailure(serverFailureMessage)));
           },
         );
       });
@@ -253,7 +253,7 @@ void main() {
             // Assert
             verifyZeroInteractions(remoteDataSource);
             verifyZeroInteractions(localDataSource);
-            expect(result, Left(NetworkFailure()));
+            expect(result, Left(NetworkFailure(networkFailureMessage)));
           },
         );
       });
@@ -316,7 +316,7 @@ void main() {
             // Assert
             verify(remoteDataSource.getProductById(tId));
             verifyZeroInteractions(localDataSource);
-            expect(result, Left(ServerFailure()));
+            expect(result, Left(ServerFailure(serverFailureMessage)));
           },
         );
       });
@@ -351,7 +351,7 @@ void main() {
             // Assert
             verify(localDataSource.getProductById(tId));
             verifyZeroInteractions(remoteDataSource);
-            expect(result, Left(CacheFailure()));
+            expect(result, Left(CacheFailure(cacheFailureMessage)));
           },
         );
       });
@@ -401,7 +401,7 @@ void main() {
           // Assert
           verify(remoteDataSource.updateProduct(tProductModel));
           verifyZeroInteractions(localDataSource);
-          expect(result, Left(ServerFailure()));
+          expect(result, Left(ServerFailure(serverFailureMessage)));
         });
       });
 
@@ -418,7 +418,7 @@ void main() {
             // Assert
             verifyZeroInteractions(remoteDataSource);
             verifyZeroInteractions(localDataSource);
-            expect(result, Left(NetworkFailure()));
+            expect(result, Left(NetworkFailure(networkFailureMessage)));
           },
         );
       });

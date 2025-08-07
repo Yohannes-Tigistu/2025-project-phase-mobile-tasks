@@ -10,6 +10,10 @@ import '../datasources/products_local_data_source.dart';
 import '../datasources/products_remote_data_source.dart';
 import '../models/product_model.dart';
 
+const serverFailureMessage = 'Server failure';
+const cacheFailureMessage = 'Cache failure';
+const networkFailureMessage = 'Network failure';
+
 class ProductRepositoryImpl implements ProductRepository {
   final ProductsRemoteDataSource remoteDataSource;
   final ProductsLocalDataSource localDataSource;
@@ -29,14 +33,14 @@ class ProductRepositoryImpl implements ProductRepository {
         localDataSource.cacheProducts(remoteProducts);
         return Right(remoteProducts);
       } catch (e) {
-        return Left(ServerFailure());
+        return Left(ServerFailure(serverFailureMessage));
       }
     } else {
       try {
         final localProducts = await localDataSource.getLastProducts();
         return Right(localProducts);
       } catch (e) {
-        return Left(CacheFailure());
+        return Left(CacheFailure(cacheFailureMessage));
       }
     }
   }
@@ -49,10 +53,10 @@ class ProductRepositoryImpl implements ProductRepository {
         await remoteDataSource.createProduct(productModel);
         return Right(Confirmation('Product created successfully'));
       } catch (e) {
-        return Left(ServerFailure());
+        return Left(ServerFailure(serverFailureMessage));
       }
     } else {
-      return Left(NetworkFailure());
+      return Left(NetworkFailure(networkFailureMessage));
     }
   }
 
@@ -64,10 +68,10 @@ class ProductRepositoryImpl implements ProductRepository {
         localDataSource.deleteProduct(id);
         return Right(Confirmation('Product deleted successfully'));
       } catch (e) {
-        return Left(ServerFailure());
+        return Left(ServerFailure(serverFailureMessage));
       }
     } else {
-      return Left(NetworkFailure());
+      return Left(NetworkFailure(networkFailureMessage ));
     }
   }
 
@@ -79,14 +83,14 @@ class ProductRepositoryImpl implements ProductRepository {
         localDataSource.cacheProduct(product);
         return Right(product);
       } catch (e) {
-        return Left(ServerFailure());
+        return Left(ServerFailure(serverFailureMessage));
       }
     } else {
       try {
         final product = await localDataSource.getProductById(id);
         return Right(product);
       } catch (e) {
-        return Left(CacheFailure());
+        return Left(CacheFailure(cacheFailureMessage));
       }
     }
   }
@@ -100,10 +104,10 @@ class ProductRepositoryImpl implements ProductRepository {
         localDataSource.updateProduct(productModel);
         return Right(Confirmation('Product updated successfully'));
       } catch (e) {
-        return Left(ServerFailure());
+        return Left(ServerFailure(serverFailureMessage));
       }
     } else {
-      return Left(NetworkFailure());
+      return Left(NetworkFailure(networkFailureMessage ));
     }
   }
 }
