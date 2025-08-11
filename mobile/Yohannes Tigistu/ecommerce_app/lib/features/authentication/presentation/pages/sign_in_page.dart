@@ -18,7 +18,7 @@ class SignIn extends StatelessWidget {
         listener: (context, state) {
           if (state is Authenticated) {
             // Navigate to home page on successful login
-            Navigator.pushReplacementNamed(context, '/home');
+            Navigator.pushReplacementNamed(context, '/chats');
           } else if (state is AuthError) {
             // Show error message
             ScaffoldMessenger.of(
@@ -134,8 +134,8 @@ class SignIn extends StatelessWidget {
                                   // Trigger sign-in logic
                                   context.read<AuthBloc>().add(
                                     AuthLoginRequested(
-                                      emailController.text,
-                                      passwordController.text,
+                                      emailController.text.trim(),
+                                      passwordController.text.trim(),
 
                                       // i want to check the strings to print them
                                     ),

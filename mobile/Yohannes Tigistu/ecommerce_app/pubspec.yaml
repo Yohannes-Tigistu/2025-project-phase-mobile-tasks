@@ -45,6 +45,7 @@ dependencies:
   internet_connection_checker_plus: ^2.7.2
   matcher: ^0.12.17
   bloc_test: ^10.0.0
+  socket_io_client: ^3.1.2
 
 dev_dependencies:
   flutter_test:

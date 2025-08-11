@@ -81,6 +81,7 @@ class AuthRepositoryImpl implements AuthRepository {
         final token = await localDataSource.getToken();
         if (token != null) {
           final userModel = await remoteDataSource.getCurrentUser(token);
+          await localDataSource.cacheUser(userModel);
           return Right(userModel);
         } else {
           return Left(CacheFailure(cacheFailureMessage));

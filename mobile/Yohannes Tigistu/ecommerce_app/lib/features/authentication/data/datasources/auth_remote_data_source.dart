@@ -35,6 +35,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
    
     if (response.statusCode == 201) {
+
       final data = (json.decode(response.body))['data'];
       return UserModel.fromJson(data);
     } else {
@@ -53,8 +54,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final data = json.decode(response.body);
       var accessToken = data['data'];
       
+      
       return accessToken['access_token']; // Assuming the token is returned in the response
     } else {
+    
       throw ServerException();
     }
   }
