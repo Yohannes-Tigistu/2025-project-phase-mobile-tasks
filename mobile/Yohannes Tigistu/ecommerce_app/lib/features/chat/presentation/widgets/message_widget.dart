@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import '../../../authentication/domain/entities/user.dart';
 import '../../domain/entities/message.dart';
 
-// a single instance of a message for the ui
 class MessageWidget extends StatelessWidget {
   const MessageWidget({super.key, required this.message, required this.user});
 
@@ -12,34 +11,36 @@ class MessageWidget extends StatelessWidget {
   final User user;
 
   String _formatTimestamp(DateTime timestamp) {
-    // am pm
     final hour = timestamp.hour;
     final minute = timestamp.minute.toString().padLeft(2, '0');
     final ampm = hour >= 12 ? 'PM' : 'AM';
-    return '${hour % 12}:${minute} $ampm';
+    return '${hour % 12}:$minute $ampm';
   }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shadowColor: Colors.black12,
-      color: user.id == message.sender.id ? Colors.blue[100] : Colors.grey[300],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      // based onthe user id choos a side to stick to left or th right
+    final isMe = user.id == message.sender.id;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Column(
-        crossAxisAlignment: user.id == message.sender.id
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
+        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          Stack(
-            alignment: Alignment(1, 1),
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(message.content),
-              ),
-              Text(_formatTimestamp(message.timestamp)),
-            ],
+          Container(
+            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+            decoration: BoxDecoration(
+              color: isMe ? Colors.blue[300] : Colors.grey[300],
+              borderRadius: BorderRadius.circular(16),
+            ),
+            padding: const EdgeInsets.all(12),
+            child: Text(
+              message.content,
+              style: TextStyle(color: isMe ? Colors.white : Colors.black87),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _formatTimestamp(message.timestamp),
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
           ),
         ],
       ),

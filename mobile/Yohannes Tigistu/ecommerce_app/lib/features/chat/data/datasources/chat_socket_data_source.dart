@@ -1,16 +1,24 @@
 import 'dart:async';
 
+// import 'dart:io'; // Still commented; not needed unless overriding HTTP for insecure connections
+
+import 'package:dartz/dartz.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+
+import '../../../../core/errors/failures.dart';
+import '../../domain/entities/message.dart';
+import '../models/messages_model.dart';
 
 /// Socket data source for real-time chat via Socket.IO
 /// - Handles connect/disconnect, join room, send message with ack, and streams
 /// - Exposes message and typing streams; consumers map payloads to models/entities
 abstract class ChatSocketDataSource {
   Future<void> connect({required String socketBaseUrl, required String token});
-  Future<void> joinRoom(String chatId);
+
   Future<bool> sendMessage({required String chatId, required String content});
-  Stream<Map<String, dynamic>> messages();
-  // Stream<Map<String, dynamic>> typing();
+  Stream<Either<Failures, Message>> get messageReceivedStream;
+  Stream<Either<Failures, Message>> get messageDeliveredStream;
+  Future<void> joinRoom(String chatId);
   Future<void> disconnect();
   // Optional: callback-based listeners (raw JSON payloads)
   void setListeners({
@@ -23,20 +31,30 @@ abstract class ChatSocketDataSource {
 }
 
 // Base URL is provided by repository; no fixed constant needed here.
+const String serverFailureMessage = 'Server Failure';
 
 class ChatSocketDataSourceImpl implements ChatSocketDataSource {
   IO.Socket? _socket;
   String? _activeChatId;
 
-  final _messageCtrl = StreamController<Map<String, dynamic>>.broadcast();
-  // final _typingCtrl = StreamController<Map<String, dynamic>>.broadcast();
+  final _receivedController =
+      StreamController<Either<Failures, MessagesModel>>.broadcast();
+  // final _typingCtrl = StreamController<MessagesModel>>.broadcast();
+  final _deliveredController =
+      StreamController<Either<Failures, MessagesModel>>.broadcast();
 
-  // Callback handlers
+  Completer<void>? _connectionCompleter;
+  bool _isConnected = false;
+
+  // Error stream for socket errors
+  final _errorController = StreamController<String>.broadcast();
+
+  // Callback fields
   void Function()? _onConnectedCb;
   void Function()? _onDisconnectedCb;
-  void Function(Map<String, dynamic>)? _onMessageReceivedCb;
-  void Function(Map<String, dynamic>)? _onMessageDeliveredCb;
-  void Function(String)? _onMessageErrorCb;
+  void Function(Map<String, dynamic> message)? _onMessageReceivedCb;
+  void Function(Map<String, dynamic> message)? _onMessageDeliveredCb;
+  void Function(String error)? _onMessageErrorCb;
 
   @override
   void setListeners({
@@ -58,69 +76,125 @@ class ChatSocketDataSourceImpl implements ChatSocketDataSource {
     required String socketBaseUrl,
     required String token,
   }) async {
-    if (_socket?.connected == true) return;
+    if (_isConnected) {
+      print('⚠️ Socket already connected');
+      return;
+    }
 
-    final opts = IO.OptionBuilder()
-        .setTransports(['websocket']) // Force WebSocket (not polling)
-        .enableAutoConnect() // Auto-reconnect on disconnect
-        .setExtraHeaders({
-          // Send auth token in headers
-          'Authorization': 'Bearer $token',
-        })
-        .build();
+    _connectionCompleter = Completer<void>();
 
-    _socket = IO.io(socketBaseUrl, opts);
+    _socket = IO.io(
+      socketBaseUrl,
+      IO.OptionBuilder()
+          .setTransports(['websocket'])
+          .enableForceNew()
+          .enableAutoConnect() // be explicit
+          .setExtraHeaders({'Authorization': 'Bearer $token'})
+          .build(),
+    );
 
-    _socket!
-      ..onConnect((_) {
-        _onConnectedCb?.call();
-        if (_activeChatId != null) {
-          joinRoom(_activeChatId!);
-        }
-      })
-      ..onReconnect((_) {
-        if (_activeChatId != null) {
-          joinRoom(_activeChatId!);
-        }
-      })
-      ..onDisconnect((_) {
-        _onDisconnectedCb?.call();
-      })
-      ..onError((e) {
-        // Optionally emit an error payload to message stream
-        _onMessageErrorCb?.call(e?.toString() ?? 'socket_error');
-      })
-      // Support both legacy 'message' and documented 'message:received'
-      ..on('message', (data) {
-        if (data is Map) {
-          _messageCtrl.add(Map<String, dynamic>.from(data));
-          _onMessageReceivedCb?.call(Map<String, dynamic>.from(data));
-        }
-      })
-      ..on('message:received', (data) {
-        if (data is Map) {
-          final map = Map<String, dynamic>.from(data);
-          _messageCtrl.add(map);
-          _onMessageReceivedCb?.call(map);
-        }
-      })
-      ..on('message:delivered', (data) {
-        if (data is Map) {
-          final map = Map<String, dynamic>.from(data);
-          _messageCtrl.add(map);
-          _onMessageDeliveredCb?.call(map);
-        }
-      });
+    _socket!.onConnect((_) {
+      _isConnected = true;
+      print('✅ Socket connected to $socketBaseUrl');
+      _onConnectedCb?.call(); // FIX: Invoke the connected callback if set
+      _connectionCompleter?.complete();
+    });
 
+    _socket!.onDisconnect((_) {
+      _isConnected = false;
+      print('❌ Socket disconnected');
+      _onDisconnectedCb?.call(); // FIX: Invoke the disconnected callback if set
+      // FIX: Only error the completer if it's during initial connection (not completed yet)
+      if (!(_connectionCompleter?.isCompleted ?? true)) {
+        _connectionCompleter?.completeError(
+          ServerFailure('Disconnected during connection'),
+        );
+      }
+    });
+
+    _socket!.onReconnect((_) => print('🔄 Socket reconnected'));
+    _socket!.onReconnectAttempt((_) => print('⏳ Attempting to reconnect...'));
+    _socket!.onConnectError((err) {
+      print('🚨 Socket connection error: $err');
+      if (!(_connectionCompleter?.isCompleted ?? true)) {
+        _connectionCompleter?.completeError(
+          ServerFailure('Socket connection error'),
+        );
+      }
+      _errorController.add(err.toString());
+    });
+
+    // Listen for incoming messages
+    _socket!.on('message:received', (data) {
+      print('📩 Raw received message: $data');
+      // FIX: Safely cast and invoke callback before parsing
+      if (data is Map<String, dynamic>) {
+        _onMessageReceivedCb?.call(data);
+      } else {
+        print(
+          '⚠️ Unexpected data type for received message: ${data.runtimeType}',
+        );
+      }
+      try {
+        final message = MessagesModel.fromJson(Map<String, dynamic>.from(data));
+        _receivedController.add(Right(message));
+      } catch (e) {
+        print('⚠️ Error parsing received message: $e');
+        _receivedController.add(Left(ServerFailure(serverFailureMessage)));
+      }
+    });
+
+    // Listen for delivery confirmations
+    _socket!.on('message:delivered', (data) {
+      print('📬 Raw delivery confirmation: $data');
+      // FIX: Safely cast and invoke callback
+      if (data is Map<String, dynamic>) {
+        _onMessageDeliveredCb?.call(data);
+      } else {
+        print(
+          '⚠️ Unexpected data type for delivered message: ${data.runtimeType}',
+        );
+      }
+      try {
+        final message = MessagesModel.fromJson(Map<String, dynamic>.from(data));
+        _deliveredController.add(Right(message));
+      } catch (e) {
+        _deliveredController.add(Left(ServerFailure(serverFailureMessage)));
+      }
+    });
+
+    // Listen for errors
+    _socket!.on('message:error', (data) {
+      print('🚨 Message error event: $data');
+      String errorMsg = 'Unknown message error';
+      if (data is Map && data['error'] != null) {
+        errorMsg = data['error'].toString();
+      } else if (data != null) {
+        errorMsg = data.toString();
+      }
+      _errorController.add(errorMsg);
+      _onMessageErrorCb?.call(
+        errorMsg,
+      ); // FIX: Invoke the error callback if set
+    });
+
+    // Explicit connect (harmless if already connecting) for reliability on some platforms
     _socket!.connect();
+
+    return _connectionCompleter!.future;
   }
 
   @override
   Future<void> joinRoom(String chatId) async {
     _activeChatId = chatId;
-    // Emit both variations to be compatible with server handlers
-    _socket?.emit('chat:join', {'chatId': chatId});
-    _socket?.emit('join', {'chatId': chatId});
+    // Emit multiple variants to maximize compatibility with backend naming.
+    final payload = {'chatId': chatId};
+    _socket?.emit('join', payload);
+    _socket?.emit('chat:join', payload);
+    _socket?.emit('room:join', payload);
+    print(
+      '🔗 Sent join events for chat room: $chatId -> join | chat:join | room:join',
+    );
   }
 
   @override
@@ -128,36 +202,83 @@ class ChatSocketDataSourceImpl implements ChatSocketDataSource {
     required String chatId,
     required String content,
   }) async {
-    // If not connected, fail fast
-    if (!(_socket?.connected ?? false)) {
-      // Debug: not connected when trying to send
-      // print('Socket send failed: not connected');
+    if (!_isConnected) {
+      print('❌ Cannot send message — socket not connected.');
       return false;
     }
-  
-    // Debug: sending payload
-    // print('Emitting message:send -> chatId=$chatId content="$content"');
-    _socket?.emit('message:send', {
+
+    final completer = Completer<bool>();
+    final payload = {
       'chatId': chatId,
       'content': content,
       'type': 'text',
+      // Provide activeChatId redundancy if server differentiates
+    };
+
+    print('📤 Emitting message:send with ack -> $payload');
+
+    bool ackHandled = false;
+    // Fallback timeout in case server never acks
+    Timer(const Duration(seconds: 6), () {
+      if (!ackHandled && !completer.isCompleted) {
+        print('⌛ Ack timeout – assuming message send failure');
+        completer.complete(false);
+      }
     });
-    // Since we are not waiting for an acknowledgement, we assume success if the
-    // message was emitted. The connection check at the start handles offline cases.
-    return true;
+
+    try {
+      _socket!.emitWithAck(
+        'message:send',
+        payload,
+        ack: (data) {
+          ackHandled = true;
+          if (data is Map && data.containsKey('error')) {
+            final errorMessage = data['error'].toString();
+            print('🚨 Message send failed with error: $errorMessage');
+            _errorController.add(errorMessage);
+            _onMessageErrorCb?.call(errorMessage);
+            if (!completer.isCompleted) completer.complete(false);
+          } else {
+            print('✅ Message acknowledged by server successfully.');
+            if (!completer.isCompleted) completer.complete(true);
+          }
+        },
+      );
+    } catch (e) {
+      print('🚨 emitWithAck threw: $e – falling back to plain emit');
+      _socket!.emit('message:send', payload);
+      // Optimistically succeed (delivered event should still confirm)
+      if (!completer.isCompleted) completer.complete(true);
+    }
+
+    return completer.future;
   }
 
   @override
-  Stream<Map<String, dynamic>> messages() => _messageCtrl.stream;
+  Stream<Either<Failures, Message>> get messageReceivedStream =>
+      _receivedController.stream.map(
+        (eitherModel) => eitherModel.map((model) => model.toEntity()),
+      );
 
   @override
-  // Stream<Map<String, dynamic>> typing() => _typingCtrl.stream;
+  Stream<Either<Failures, Message>> get messageDeliveredStream =>
+      _deliveredController.stream.map(
+        (eitherModel) => eitherModel.map((model) => model.toEntity()),
+      );
+
+  Stream<String> get errorStream => _errorController.stream;
+
   @override
   Future<void> disconnect() async {
-    // Keep controllers open for reuse on reconnect
-    _socket?.disconnect();
-    _socket?.dispose();
-    _socket = null;
+    if (!_isConnected) {
+      print('⚠️ Socket is not connected');
+      return;
+    }
+    _socket?.disconnect(); // Disconnect first
+    _socket?.dispose(); // Then dispose to clean up listeners and resources
+    _isConnected = false;
     _activeChatId = null;
+    print('🔌 Socket manually disconnected');
+    // Controllers not closed – good for potential reuse
   }
 }

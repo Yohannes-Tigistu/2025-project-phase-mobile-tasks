@@ -17,6 +17,13 @@ class Message extends Equatable {
     required this.content,
     required this.timestamp,
   });
+  
+  Message.empty()
+      : id = '',
+        chat = Chat(chatId: '', user1: User(id: '', name: '', email: ''), user2: User(id: '', name: '', email: '')),
+        sender = User(id: '', name: '', email: ''),
+        content = '',
+        timestamp = DateTime.now();
 
   @override
   List<Object?> get props => [id, chat, sender, content, timestamp];

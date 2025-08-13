@@ -236,4 +236,21 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       },
     );
   }
+
+  // Call this from the ShowDialog (e.g. after user selects a person to chat with)
+  // Example: context.read<ChatBloc>().initiateChatFromDialog(selectedUser.id);
+  Future<void> initiateChatFromDialog(String userId) async {
+    print('ChatBloc: initiateChatFromDialog called with user: $userId');
+    final res = await initiateChatUsecase.initiateChat(userId);
+    res.fold(
+      (l) {
+        print('ChatBloc: initiateChatFromDialog failed with error: $l');
+        add(ChatErrorOccurred(l.toString()));
+      },
+      (chat) {
+        print('ChatBloc: initiateChatFromDialog succeeded with chat: $chat');
+        add(ChatJoinRoom(chat.chatId));
+      },
+    );
+  }
 }

@@ -7,12 +7,30 @@ import '../widgets/list_chats.dart';
 import '../../domain/entities/chat.dart';
 import 'specific_chat_page.dart';
 
-class ChatsPage extends StatelessWidget {
+class ChatsPage extends StatefulWidget {
   const ChatsPage({super.key});
+
+  @override
+  State<ChatsPage> createState() => _ChatsPageState();
+}
+
+class _ChatsPageState extends State<ChatsPage> {
+  static const double _headerHeightFrac = 0.27;
+  static const double _cardTopOffsetFrac = 0.23;
+
+  @override
+  void initState() {
+    super.initState();
+    final bloc = context.read<ChatBloc>();
+    bloc
+      ..add(const ChatGetUsers())
+      ..add(const ChatGetChats());
+  }
 
   @override
   Widget build(BuildContext context) {
     final deviceHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: BlocConsumer<ChatBloc, ChatState>(
         listener: (context, state) {
@@ -23,80 +41,64 @@ class ChatsPage extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          if (state is ChatInitial) {
-            context.read<ChatBloc>()
-              ..add(const ChatGetUsers())
-              ..add(const ChatGetChats());
-          }
+          final users = state is ChatOverview ? state.users : const <User>[];
+          final chats = state is ChatOverview ? state.chats : const <Chat>[];
+
           return Stack(
-            alignment: Alignment(0.9, 0.9),
             children: [
-              Column(
-                children: [
-                  Container(
-                    height: deviceHeight * 0.27,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 111, 163, 240),
-                      border: Border(
-                        bottom: BorderSide(color: Colors.grey.shade300),
-                      ),
-                    ),
-                    child: buildUserAvatars(
-                      state is ChatOverview ? state.users : const <User>[],
+              Container(
+                height: deviceHeight * _headerHeightFrac,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 21, 122, 135),
+                  border: Border(
+                    bottom: BorderSide(color: Colors.grey.shade300),
+                  ),
+                ),
+                child: buildUserAvatars(users),
+              ),
+              Positioned(
+                top: deviceHeight * _cardTopOffsetFrac,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(70),
                     ),
                   ),
-                  Expanded(
-                    child: Card(
-                      margin: EdgeInsets.zero,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
-                        ),
-                      ),
-                      child: FutureBuilder(
-                        future: context.read<AuthRepository>().getCurrentUser(),
-                        builder: (context, snapshot) {
-                          final chats = state is ChatOverview
-                              ? state.chats
-                              : const <Chat>[];
-                          String? currentUserId;
-                          if (snapshot.connectionState ==
-                                  ConnectionState.done &&
-                              snapshot.hasData) {
-                            snapshot.data!.fold(
-                              (_) {},
-                              (u) => currentUserId = u.id,
-                            );
-                          }
-                          return buildChatsList(
-                            chats,
-                            currentUserId: currentUserId,
-                            onTap: (chat) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      SpecificChatPage(chat: chat),
-                                ),
-                              );
-                            },
+                  child: FutureBuilder(
+                    future: context.read<AuthRepository>().getCurrentUser(),
+                    builder: (context, snapshot) {
+                      String? currentUserId;
+                      if (snapshot.connectionState == ConnectionState.done &&
+                          snapshot.hasData) {
+                        snapshot.data!.fold(
+                          (_) {},
+                          (u) => currentUserId = u.id,
+                        );
+                      }
+                      return buildChatsList(
+                        chats,
+                        currentUserId: currentUserId,
+                        onTap: (chat) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  SpecificChatPage(chat: chat),
+                            ),
                           );
                         },
-                      ),
-                    ),
+                      );
+                    },
                   ),
-                ],
+                ),
               ),
-              IconButton(
-                iconSize: 40,
-                icon: const Icon(Icons.refresh),
-                onPressed: () {
-                  context.read<ChatBloc>()
-                    ..add(const ChatGetUsers())
-                    ..add(const ChatGetChats());
-                },
-              ),
+              if (state is ChatInitial)
+                const Center(child: CircularProgressIndicator()),
             ],
           );
         },

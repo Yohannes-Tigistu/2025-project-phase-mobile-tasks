@@ -24,19 +24,23 @@ class MessageInputBar extends StatelessWidget {
                 textInputAction: TextInputAction.send,
                 minLines: 1,
                 maxLines: 5,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Type a message',
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide.none,
+                  ),
                   isDense: true,
                   filled: true,
+                  fillColor: Colors.grey[200],
                 ),
-                onSubmitted: onSend,
+                onSubmitted: (text) => onSend(text.trim()),
               ),
             ),
             const SizedBox(width: 8),
             IconButton(
               icon: const Icon(Icons.send),
-              onPressed: () => onSend(controller.text.trim()),
+              onPressed: controller.text.trim().isEmpty ? null : () => onSend(controller.text.trim()),
             ),
           ],
         ),

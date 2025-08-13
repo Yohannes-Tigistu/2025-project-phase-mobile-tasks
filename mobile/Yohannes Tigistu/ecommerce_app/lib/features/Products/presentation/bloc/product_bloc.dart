@@ -32,10 +32,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final UpdateProductUsecase updateProductUsecase;
   final DeleteProductUsecase deleteProductUsecase;
   final ViewSpecificProductUsecase getProductByIdUsecase;
-  final InputConverter inputConverter ;     
+ 
   
   ProductBloc({
-    required this.inputConverter,
     required this.createNewProductUsecase,
     required this.deleteProductUsecase,
     required this.viewAllProductsUsecase,

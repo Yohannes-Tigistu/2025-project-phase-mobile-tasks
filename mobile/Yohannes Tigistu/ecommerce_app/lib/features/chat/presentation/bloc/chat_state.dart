@@ -28,6 +28,13 @@ final class ChatMessagesUpdated extends ChatState {
   @override
   List<Object> get props => [messages];
 }
+final class ChatStartSuccess extends ChatState {
+  final Chat chat;
+  const ChatStartSuccess(this.chat);
+
+  @override
+  List<Object> get props => [chat];
+}
 
 // Combined overview state so UI can show both users and chats together
 final class ChatOverview extends ChatState {

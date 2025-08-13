@@ -10,23 +10,22 @@ class MessageListBuilder extends StatelessWidget {
     super.key,
     required this.messages,
     required this.user,
+    required this.scrollController,
   });
 
   final List<Message> messages;
   final User user;
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 1,
-        childAspectRatio: 9,
-      ),
+    return ListView.builder(
+      controller: scrollController,
+      reverse: true,
+      physics: const BouncingScrollPhysics(),
       itemCount: messages.length,
       itemBuilder: (context, index) {
         final msg = messages[index];
-        // Use MessageWidget to display each message
-        // each messagewidget will be aligned based on the sender
         return Align(
           alignment: msg.sender.id == user.id
               ? Alignment.centerRight

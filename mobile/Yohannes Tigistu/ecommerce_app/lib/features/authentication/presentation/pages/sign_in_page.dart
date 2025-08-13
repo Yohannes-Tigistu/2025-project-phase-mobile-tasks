@@ -18,7 +18,7 @@ class SignIn extends StatelessWidget {
         listener: (context, state) {
           if (state is Authenticated) {
             // Navigate to home page on successful login
-            Navigator.pushReplacementNamed(context, '/chats');
+            Navigator.pushReplacementNamed(context, '/home');
           } else if (state is AuthError) {
             // Show error message
             ScaffoldMessenger.of(
@@ -26,7 +26,7 @@ class SignIn extends StatelessWidget {
             ).showSnackBar(SnackBar(content: Text(state.message)));
           }
 
-          // TODO: implement listener
+          
         },
         builder: (context, state) {
           return SingleChildScrollView(

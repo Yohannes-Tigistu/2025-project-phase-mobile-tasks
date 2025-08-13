@@ -71,6 +71,16 @@ class MessagesModel extends Message {
     );
   }
 
+  Message toEntity() {
+    return Message(
+      id: id,
+      chat: chat,
+      content: content,
+      sender: sender,
+      timestamp: timestamp,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -80,4 +90,5 @@ class MessagesModel extends Message {
       'sender': (sender as UserModel).toJson(),
     };
   }
+  
 }

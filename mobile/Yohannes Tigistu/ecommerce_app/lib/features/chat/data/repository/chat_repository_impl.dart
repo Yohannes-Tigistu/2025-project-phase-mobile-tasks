@@ -257,9 +257,17 @@ class ChatRepositoryImpl implements ChatRepository {
   @override
   Stream<Message> observeMessages() {
     print('[chat_repository_impl.dart] Observing messages...');
-    return socketDataSource.messages().map((json) {
-      print('[chat_repository_impl.dart] Received message: $json');
-      return MessagesModel.fromJson(json);
+    return socketDataSource.messageReceivedStream.map((either) {
+      return either.fold(
+        (failure) {
+          print('[chat_repository_impl.dart] Message received error: $failure');
+          return Message.empty();
+        },
+        (message) {
+          print('[chat_repository_impl.dart] Received message: $message');
+          return message;
+        },
+      );
     });
   }
 
